@@ -25,15 +25,17 @@ jobs:
         USER_NAME: ${{ secrets.USER_NAME }}
         ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
 
-    meterian_scan:
-        name: Meterian client scan
-        runs-on: ubuntu-latest
-        steps:
-          - name: Checkout
-            uses: actions/checkout@v3
-          - name: Meterian Scanner
-            uses: MeterianHQ/meterian-github-action@v1.0.13
-            with:
-              oss: true
+  meterian_scan:
+
+    name: Meterian Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Meterian Scanner
+        uses: MeterianHQ/meterian-github-action@v1.0.13
+        with:
+          oss: true
 
         
