@@ -1,43 +1,27 @@
-name: Java CI with Maven
+name: Offline scan with Maven
 
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+on: push
 
 jobs:
   build:
 
-    name: Package 
+    name: Offline scan 
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v3
-    - name: Set up JDK 11
+
+    - name: Set up JDK
       uses: actions/setup-java@v3
       with:
         java-version: '11'
         distribution: 'adopt'
         
-    - name: Build with Maven
-      run: mvn -s $GITHUB_WORKSPACE/.github/workflows/maven-settings.xml -B package --file pom.xml 
+    - name: Download Meterian CLI
+      run: curl -o /tmp/meterian-cli.jar -O -J -L -s https://www.meterian.com/downloads/meterian-cli.jar
+
+    - name: Meterian scan
+      run: java -Dmaven.extra.parameters="-s=.github/workflows/maven-settings.xml" -Dcli.oss.enabled=true -jar /tmp/meterian-cli.jar --report-console
       env:
         USER_NAME: ${{ secrets.USER_NAME }}
         ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-
-  meterian_scan:
-
-    name: Meterian Scan
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Meterian Scanner
-        uses: MeterianHQ/meterian-github-action@v1.0.13
-        with:
-          oss: true
-          cli_args: --debug --report-console
-
-        
