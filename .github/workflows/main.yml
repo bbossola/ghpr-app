@@ -5,23 +5,18 @@ on: push
 jobs:
   build:
 
-    name: Offline scan 
+    name: Meterian scan 
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v3
 
-    - name: Set up JDK
-      uses: actions/setup-java@v3
+    - name: Meterian Scanner
+      uses: MeterianHQ/meterian-github-action@v1.0.13
       with:
-        java-version: '11'
-        distribution: 'adopt'
-        
-    - name: Download Meterian CLI
-      run: curl -o /tmp/meterian-cli.jar -O -J -L -s https://www.meterian.com/downloads/meterian-cli.jar
-
-    - name: Meterian scan
-      run: java -Dmaven.extra.parameters="-s=.github/workflows/maven-settings.xml" -Dcli.oss.enabled=true -jar /tmp/meterian-cli.jar --report-console
+        oss: true
+        cli_args: --report-console --debug
       env:
         USER_NAME: ${{ secrets.USER_NAME }}
         ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+        CLIENT_VM_PARAMS: -Dmaven.extra.parameters=-s.github/workflows/maven-settings.xml,-ntp,-B
